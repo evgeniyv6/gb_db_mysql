@@ -1,0 +1,35 @@
+-- ex1
+
+DELIMITER //
+CREATE PROCEDURE hello()
+BEGIN
+	DECLARE h INT;
+	SET h = HOUR(NOW());
+	CASE
+		WHEN h BETWEEN 6 AND 11 THEN
+			SELECT 'Доброе утро';
+		WHEN h BETWEEN 12 AND 17 THEN
+			SELECT 'Добрый день';
+		WHEN h BETWEEN 18 AND 23 THEN
+			SELECT 'Добрый вечер';
+		WHEN h BETWEEN 0 AND 5 THEN
+			SELECT 'Доброй ночи';
+	END CASE;
+END//
+
+CALL hello()//
+DELIMITER ;
+
+
+-- ex2
+
+DELIMITER //
+DROP TRIGGER IF EXISTS check_nulls;
+CREATE TRIGGER check_nulls BEFORE INSERT ON products
+FOR EACH ROW
+BEGIN
+	IF (ISNULL(NEW.name) AND ISNULL(NEW.description)) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Action canceled';
+	END IF;
+END//
+delimiter ;
